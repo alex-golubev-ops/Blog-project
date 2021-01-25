@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -27,8 +26,8 @@ public class User implements UserDetails {
 
     private LocalDate atDate;
 
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
-    private Set<Article> articles = new HashSet<>();
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Article> articles;
 
     private boolean active;
 
@@ -158,4 +157,5 @@ public class User implements UserDetails {
     public int hashCode() {
         return Objects.hash(id, firstname, lastname, password, email, atDate, active);
     }
+
 }
