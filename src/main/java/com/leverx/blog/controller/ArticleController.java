@@ -52,5 +52,12 @@ public class ArticleController {
         return "articles";
     }
 
+    @GetMapping("/user-articles")
+    public String userMessages(@AuthenticationPrincipal User user,Model model){
+        Set<Article> articles = user.getArticles();
+        model.addAttribute("articles", articles);
+        return "userMessages";
+    }
+
 
 }
