@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface CodeRepository {
   void save(String code, String email);
-  Optional<String> findByCode(String code);
+  String findByCode(String code);
+  void delete(String code);
 }
