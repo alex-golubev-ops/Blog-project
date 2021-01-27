@@ -28,8 +28,14 @@ public class CodeRepositoryImpl implements CodeRepository {
     }
 
     @Override
-    public Optional<String> findByCode(String code) {
-        return Optional.ofNullable((String) hashOperations.get("CODS",code));
+    public String findByCode(String code) {
+        return (String) hashOperations.get("CODS",code);
 
     }
+
+    @Override
+    public void delete(String code) {
+        hashOperations.delete("CODS",code);
+    }
+
 }
