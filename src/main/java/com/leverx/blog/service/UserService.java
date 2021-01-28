@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -20,6 +21,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final CodeRepository codeRepository;
     private final MailService mailService;
+    private final Random random = new Random();
 
     public UserService(UserRepository userRepository, CodeRepository codeRepository, MailService mailService) {
         this.userRepository = userRepository;
@@ -34,9 +36,8 @@ public class UserService implements UserDetailsService {
         return userFromDb.orElseThrow(() -> new UsernameNotFoundException("User is not found " + email));
     }
 
-    public User findByEmail(String email) {
-        Optional<User> userFromDb = userRepository.findByEmail(email);
-        return  userFromDb.get();
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 
@@ -61,16 +62,58 @@ public class UserService implements UserDetailsService {
     }
 
     public boolean activate(String code) {
-        boolean result=false;
+        boolean result = false;
         String emailFromRedis = codeRepository.findByCode(code);
-        if(emailFromRedis!=null){
-            User user = findByEmail(emailFromRedis);
+        if (emailFromRedis != null) {
+            User user = findByEmail(emailFromRedis).get();
             user.setActive(true);
             userRepository.save(user);
             codeRepository.delete(code);
-            result=true;
+            result = true;
         }
         return result;
 
+    }
+
+    public boolean forgotPassword(String email) {
+        Optional<User> userFromBd = findByEmail(email);
+        if (userFromBd.isEmpty()) {
+            return false;
+        }
+        String activationCode = Integer.toString(random.nextInt(10001));
+        User user = userFromBd.get();
+        codeRepository.save(activationCode, user.getEmail());
+        String message = String.format("Hello, %s!\n" +
+                        "Your code:\n" +
+                        activationCode,
+                user.getFirstname() + " " + user.getLastname());
+        mailService.send(user.getEmail(), "Forgot Password Code: ", message);
+        return true;
+    }
+
+    public boolean checkCode(String code, String email) {
+        boolean result = false;
+        String emailFromRedis = codeRepository.findByCode(code);
+        if (emailFromRedis==null){
+            return result;
+        }
+        if (emailFromRedis.equals(email)) {
+            result = true;
+        }
+        return result;
+    }
+
+    public boolean resetPassword(String code, String password){
+        boolean result = false;
+        String emailFromRedis = codeRepository.findByCode(code);
+        Optional<User> byEmail = findByEmail(emailFromRedis);
+        if(byEmail.isEmpty()){
+            return result;
+        }
+        User user = byEmail.get();
+        user.setPassword(password);
+        userRepository.save(user);
+        codeRepository.delete(code);
+        return result;
     }
 }
