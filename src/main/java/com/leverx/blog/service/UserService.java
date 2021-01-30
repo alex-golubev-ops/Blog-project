@@ -7,8 +7,8 @@ import com.leverx.blog.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
@@ -21,12 +21,15 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final CodeRepository codeRepository;
     private final MailService mailService;
+    private final PasswordEncoder passwordEncoder;
     private final Random random = new Random();
 
-    public UserService(UserRepository userRepository, CodeRepository codeRepository, MailService mailService) {
+    public UserService(UserRepository userRepository, CodeRepository codeRepository,
+                       MailService mailService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.codeRepository = codeRepository;
         this.mailService = mailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -40,7 +43,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email);
     }
 
-
     public boolean save(User user) {
         Optional<User> userFromDb = userRepository.findByEmail(user.getEmail());
         if (userFromDb.isPresent()) {
@@ -49,6 +51,7 @@ public class UserService implements UserDetailsService {
         user.setRoles(Collections.singleton(Role.USER));
         user.setAtDate(LocalDate.now());
         user.setActive(false);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         String activationCode = UUID.randomUUID().toString();
         codeRepository.save(activationCode, user.getEmail());
         String message = String.format("Hello, %s!\n" +
@@ -72,7 +75,6 @@ public class UserService implements UserDetailsService {
             result = true;
         }
         return result;
-
     }
 
     public boolean forgotPassword(String email) {
@@ -94,7 +96,7 @@ public class UserService implements UserDetailsService {
     public boolean checkCode(String code, String email) {
         boolean result = false;
         String emailFromRedis = codeRepository.findByCode(code);
-        if (emailFromRedis==null){
+        if (emailFromRedis == null) {
             return result;
         }
         if (emailFromRedis.equals(email)) {
@@ -103,15 +105,15 @@ public class UserService implements UserDetailsService {
         return result;
     }
 
-    public boolean resetPassword(String code, String password){
+    public boolean resetPassword(String code, String password) {
         boolean result = false;
         String emailFromRedis = codeRepository.findByCode(code);
         Optional<User> byEmail = findByEmail(emailFromRedis);
-        if(byEmail.isEmpty()){
+        if (byEmail.isEmpty()) {
             return result;
         }
         User user = byEmail.get();
-        user.setPassword(password);
+        user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
         codeRepository.delete(code);
         return result;
