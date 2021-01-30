@@ -1,7 +1,6 @@
 package com.leverx.blog.controller;
 
 import com.leverx.blog.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +32,6 @@ public class UserController {
             model.addAttribute("email", email);
         }
         return "forgotPassword";
-
     }
 
     @GetMapping("/auth/check_code")
