@@ -7,7 +7,7 @@
 
         <button class="btn btn-outline-success mr-5" type="submit">Search</button>
     </form>
-    <#if user??>
+    <#if userAuthentication??>
         <a class="btn btn-primary mt-3" data-toggle="collapse" href="#collapseExample" role="button"
            aria-expanded="false"
            aria-controls="collapseExample">
@@ -18,11 +18,11 @@
             <div class="form-group">
                 <form method="post" action="/articles">
 
-                    <input class="form-control mt-3" type="text" name="title" placeholder="Title"/>
-                    <input class="form-control mt-3" type="text" name="tags" placeholder="Tags"/>
+                    <input required class="form-control mt-3" type="text" name="title" placeholder="Title"/>
+                    <input required class="form-control mt-3" type="text" name="tags" placeholder="Tags"/>
 
                     <div class="form-floating mt-3">
-                    <textarea class="form-control h-25" rows="5" name="text" placeholder="Enter text here"
+                    <textarea required class="form-control h-25" rows="5" name="text" placeholder="Enter text here"
                               id="floatingTextarea"></textarea>
 
                     </div>
@@ -42,7 +42,7 @@
                         </label>
                     </div>
 
-                    <button class="btn btn-primary mt-3" type="submit">Добавить</button>
+                    <button class="btn btn-primary mt-3" type="submit">Add</button>
 
                 </form>
             </div>
@@ -68,10 +68,12 @@
                 <p class="card-text">
 
                 <p class="card-text">${articl.text}</p>
-                <a href="#" class="btn btn-primary">Comments</a>
+                 <#if userAuthentication??>
+                <a href="/articles/${articl.id}/comments" class="btn btn-primary">Comments</a>
+                </#if>
 
-                <#if user?? && user == articl.getAuthor()>
-                <a href="/update" class="btn btn-primary">Update</a>
+                <#if userAuthentication?? && userAuthentication == articl.getAuthor()>
+                <a href="/articles/${articl.id}/" class="btn btn-primary">Edit</a>
 
                 </#if>
             </div>
