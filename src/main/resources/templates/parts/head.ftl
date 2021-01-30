@@ -11,14 +11,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/articles">Posts</a>
                 </li>
-                <#if user??>
+                <#if userAuthentication??>
                 <li class="nav-item">
-                    <a class="nav-link" href="/user-articles">MyPosts</a>
+                    <a class="nav-link" href="/my">MyPosts</a>
                 </li>
                 </#if>
             </ul>
             <div class="navbar-text mr-2">${name}</div>
-            <#if user??>
+            <#if userAuthentication??>
                 <form action="/logout" >
 
                     <button class="btn btn-primary">Sign out</button>
