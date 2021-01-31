@@ -1,5 +1,6 @@
 <#import "parts/blog.ftl" as m>
 <#include "parts/security.ftl">
+    <#import "parts/pager.ftl" as p>
 <@m.page>
     <form class="d-flex" method="get" action="/articles">
         <input name=filter value="filter" class="form-control mr-2" type="text" placeholder="Search"
@@ -51,7 +52,10 @@
 
 
     <div class="mt-5">Posts:</div>
-    <#list articles as articl>
+
+    <@p.pager url page/>
+
+    <#list page.content as articl>
         <div class="card mt-2 ">
 
             <div class="card-header d-flex">
@@ -68,16 +72,17 @@
                 <p class="card-text">
 
                 <p class="card-text">${articl.text}</p>
-                 <#if userAuthentication??>
-                <a href="/articles/${articl.id}/comments" class="btn btn-primary">Comments</a>
+                <#if userAuthentication??>
+                    <a href="/articles/${articl.id}/comments" class="btn btn-primary">Comments</a>
                 </#if>
 
                 <#if userAuthentication?? && userAuthentication == articl.getAuthor()>
-                <a href="/articles/${articl.id}/" class="btn btn-primary">Edit</a>
-
+                    <a href="/articles/${articl.id}" class="btn btn-primary">Edit</a>
+                    <form action="/articles/${articl.id}" method="post">
+                    <button  class="btn btn-primary mt-1">Delete</button>
+                        </form>
                 </#if>
             </div>
-
         </div>
     <#else>
         No articles

@@ -2,37 +2,50 @@ package com.leverx.blog.service;
 
 import com.leverx.blog.entity.Article;
 import com.leverx.blog.entity.Status;
+import com.leverx.blog.entity.User;
 import com.leverx.blog.repository.ArticleRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ArticleService {
     private final ArticleRepository articleRepository;
 
-    public ArticleService(ArticleRepository articleRepository) {
+    private final TagService tagService;
+
+    public ArticleService(ArticleRepository articleRepository, TagService tagService) {
         this.articleRepository = articleRepository;
+        this.tagService = tagService;
     }
 
     public void save(Article article) {
         articleRepository.save(article);
     }
 
-    public List<Article> findList(Status status){
-        if(status==Status.ALL){
-            return articleRepository.findAll();
-        }
-        else {
-            return articleRepository.findAll().stream().filter(e->e.getStatus().equals(Status.PUBLIC))
-                    .collect(Collectors.toList());
+    public Page<Article> findList(Status status, Pageable pageable) {
+        if (status == Status.ALL) {
+            return articleRepository.findAll(pageable);
+        } else {
+            return articleRepository.findByStatus(status, pageable);
         }
     }
 
-    public void delete(Article article){
-        articleRepository.delete(article);
+    public Page<Article> findByAuthor(User author, Pageable pageable){
+        return articleRepository.findByAuthor(author,pageable);
     }
 
+    public void update(Article article, boolean access) {
+        if (access) {
+            articleRepository.save(article);
+            tagService.clearGarbage();
+        }
+    }
 
+    public void delete(Article article, boolean access) {
+        if (access) {
+            articleRepository.delete(article);
+        }
+    }
 
 }
