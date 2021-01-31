@@ -2,11 +2,14 @@ package com.leverx.blog.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+
     private Integer id;
 
     private String title;
@@ -24,17 +27,26 @@ public class Article {
 
     private LocalDate updateAt;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "articles_tags",
+            joinColumns = @JoinColumn(name = "article_id",
+                    referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id",
+                    referencedColumnName = "id"))
+    private Set<Tag> tags = new HashSet<>();
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy(value = "createAt")
+    private Set<Comment> comments = new HashSet<>();
+
     public Article() {
     }
 
-    public Article(String title, String text, Status status,
-                   User author, LocalDate createAt, LocalDate updateAt) {
+    public Article(String title, String text, Status status) {
         this.title = title;
         this.text = text;
         this.status = status;
-        this.author = author;
-        this.createAt = createAt;
-        this.updateAt = updateAt;
+
     }
 
     public Integer getId() {
@@ -73,14 +85,6 @@ public class Article {
         return author;
     }
 
-    public void setAuthorId(User author) {
-        this.author = author;
-    }
-
-    public LocalDate getCreateAt() {
-        return createAt;
-    }
-
     public void setCreateAt(LocalDate createAt) {
         this.createAt = createAt;
     }
@@ -95,5 +99,25 @@ public class Article {
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public LocalDate getCreateAt() {
+        return createAt;
     }
 }
