@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-//todo delete
 public class CommentService {
 
     private final CommentRepository commentRepository;
