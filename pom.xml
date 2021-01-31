@@ -98,12 +98,21 @@
             <version>2.3.4.RELEASE</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+        <!-- Jedis -->
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>2.9.0</version>
         </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>2.3.6.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+
 
 
 
