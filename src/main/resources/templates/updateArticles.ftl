@@ -2,7 +2,7 @@
 <#include "parts/security.ftl">
 <@m.page>
     <div class="form-group">
-        <form method="post" action="/articles/${article.id}">
+        <form method="post" action="/articles/${article.id}/update">
 
             <input required class="form-control mt-3" type="text" name="title" value="${article.title}"/>
             <input required class="form-control mt-3" type="text" name="tags" value="${article.tags}"/>

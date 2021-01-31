@@ -3,7 +3,7 @@
     <#import "parts/pager.ftl" as p>
 <@m.page>
     <form class="d-flex" method="get" action="/articles">
-        <input name=filter value="filter" class="form-control mr-2" type="text" placeholder="Search"
+        <input name=filter value="${filter}" class="form-control mr-2" type="text" placeholder="Search"
                aria-label="Search">
 
         <button class="btn btn-outline-success mr-5" type="submit">Search</button>

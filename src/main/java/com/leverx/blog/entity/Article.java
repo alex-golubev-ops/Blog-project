@@ -19,7 +19,7 @@ public class Article {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User author;
 
@@ -36,7 +36,6 @@ public class Article {
     private Set<Tag> tags = new HashSet<>();
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy(value = "createAt")
     private Set<Comment> comments = new HashSet<>();
 
     public Article() {
@@ -120,4 +119,5 @@ public class Article {
     public LocalDate getCreateAt() {
         return createAt;
     }
+
 }

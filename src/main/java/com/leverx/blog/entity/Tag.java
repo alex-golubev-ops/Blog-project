@@ -19,7 +19,7 @@ public class Tag {
 
     private String name;
 
-    @ManyToMany()
+    @ManyToMany
     @JoinTable(name = "tags_articles",
             joinColumns = @JoinColumn(name = "tag_id",
                     referencedColumnName = "id"),

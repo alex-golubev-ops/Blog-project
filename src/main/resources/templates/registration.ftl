@@ -10,7 +10,8 @@
             <label class="form-label"> Password: </label>
             <input required class="form-control" type="password" name="password"/>
             <label class="form-label"> Email: </label>
-            <input required class="form-control" type="email" name="email" placeholder="some@some.com"/>
+            <input required class="form-control" type="email" name="email" placeholder="email@your.there"/>
+
             <#if emailmessage??>
                 <div >
                     ${emailmessage}

@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Service
 public class ArticleService {
     private final ArticleRepository articleRepository;
@@ -23,16 +26,16 @@ public class ArticleService {
         articleRepository.save(article);
     }
 
-    public Page<Article> findList(Status status, Pageable pageable) {
-        if (status == Status.ALL) {
-            return articleRepository.findAll(pageable);
-        } else {
-            return articleRepository.findByStatus(status, pageable);
+    public Page<Article> findList(List<Status> status, String filter, Pageable pageable) {
+        if (filter != null && !filter.isEmpty()) {
+            return articleRepository.findByStatusInAndTags(status, Arrays.asList(filter.split(" ")), pageable);
         }
+        return articleRepository.findByStatusIn(status,pageable);
+
     }
 
-    public Page<Article> findByAuthor(User author, Pageable pageable){
-        return articleRepository.findByAuthor(author,pageable);
+    public Page<Article> findByAuthor(User author, Pageable pageable) {
+        return articleRepository.findByAuthor(author, pageable);
     }
 
     public void update(Article article, boolean access) {
@@ -46,6 +49,10 @@ public class ArticleService {
         if (access) {
             articleRepository.delete(article);
         }
+    }
+    public Page<Article> findAll(Pageable pageable){
+        return articleRepository.findAll(pageable);
+
     }
 
 }
