@@ -1,5 +1,6 @@
 <#import "parts/blog.ftl" as m>
 <#include "parts/security.ftl">
+    <#import "parts/pager.ftl" as p>
 <@m.page>
     <a class="btn btn-primary mt-3" data-toggle="collapse" href="#collapseExample" role="button"
        aria-expanded="false"
@@ -43,7 +44,8 @@
 
 
     <div class="mt-5">My Posts:</div>
-    <#list articles as articl>
+    <@p.pager url page/>
+    <#list page.content as articl>
         <div class="card mt-2 ">
 
             <div class="card-header d-flex">
